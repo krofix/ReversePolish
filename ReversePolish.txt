@@ -1,0 +1,178 @@
+
+/* Main
+---------------------------------------- */
+Создается объект управления операторами (ОУО) # AnonymousFunctionsRPO::__constructor()
+ОУО создает новый оператор + # AnonymousFunctionsRPO::addOperator()
+Создание нового объекта интерфейса (передается ОУО) # StringRPI::__constructor()
+Создаем новый оператор * через интерфейс стэка # ReversePolish::addOperator()
+Удаляем оператор + # AnonymousFunctionsRPO::removeOperator (ОУО был склонирован поэтому удаление не повлияет на работу объекта стэка)
+Запускается команда и выводится ее результат # StringRPI::execute()
+
+/* AnonymousFunctionsRPO::__constructor()
+---------------------------------------- */
+-
+
+/* AnonymousFunctionsRPO::addOperator( string $operator, Clossure $callback )
+---------------------------------------- */
+Проверяет существует ли такой оператор # AnonymousFunctionsRPO::hasOperator()
+Если да
+	Выдает предупреждение # Log::report()
+Добавляет или заменяет указанный оператор # AnonymousFunctionsRPO::$operators
+
+/* StringRPI::__constructor( $operatorController )
+---------------------------------------- */
+Передает управление родительскому конструктору # ReversePolish::__constructor()
+
+/* ReversePolish::addOperator()
+---------------------------------------- */
+Получает все переданные аргументы # (func_get_args)
+Добавляет оператор в ОУО передав ему полученные аргументы # AnonymousFunctionsRPO::addOperator()
+
+/* AnonymousFunctionsRPO::removeOperator( $operator )
+---------------------------------------- */
+Проверить есть ли такой оператор # AnonymousFunctionsRPO::hasOperator()
+Если да
+	Удалить его
+Если нет
+	Вывести предупреждение # Log::report()
+
+/* StringRPI::execute( $equation )
+---------------------------------------- */
+Сбрасывает текущее состояние # StringRPI::reset()
+Сохраняет строку в объекте # StringRPI::register()
+Запускает выполнение уравнения # StringRPI::run()
+Возвращает результат # ReversePolish::getResult()
+
+/* AnonymousFunctionsRPO::hasOperator( $operator )
+---------------------------------------- */
+Проверяет сохранен ли указанный оператор # AnonymousFunctionsRPO::$operators
+Если да
+	Возвращает истину
+Если нет
+	Возвращает ложь
+
+/* Log::report( $errorLevel, $message )
+---------------------------------------- */
+Вывести оформленное сообщение об ошибке # $message
+Если $errorLevel назначен как фатальная ошибка # Log::LVL_FATAL
+	Завершить выполнение приложения
+
+/* AnonymousFunctionsRPO::$operators = array( operator => array( callback => Clossure, count => null ))
+---------------------------------------- */
+-
+
+/* ReversePolish::__constructor( $operatorController )
+---------------------------------------- */
+Клонируем ОУО # ReversePolish::$operatorController
+Сохранить текущий объект в ОУО # AnonymousFunctionsRPO::setStackObject()
+
+/* StringRPI::register( $equation )
+---------------------------------------- */
+Обрезает пробелы по краям
+Заменяет множественные пробелы на один
+Сохраняет уравнение в объект # StringRPI::$equation
+
+/* StringRPI::run()
+---------------------------------------- */
+Цикл последовательно возвращающий элементы из строки # StringRPI::$equation
+	Выполняем полученный элемент # ReversePolish::pushCommand()
+
+/* StringRPI::reset()
+---------------------------------------- */
+Удаляет текущую строку # StringRPI::$equation
+Вызывает родительский ресет # ReversePolish::reset()
+
+/* ReversePolish::getResult()
+---------------------------------------- */
+Возвращает значение последнего операнда в стеке # ReversePolish::$operands
+
+/* Log::LVL_WARNING = 'warning'
+---------------------------------------- */
+-
+
+/* Log::LVL_FATAL = 'fatal'
+---------------------------------------- */
+-
+
+/* ReversePolish::$operatorController
+---------------------------------------- */
+-
+
+/* AnonymousFunctionsRPO::setStackObject( $stackObject )
+---------------------------------------- */
+Сохраняет ссылку на стэк-объект # AnonymousFunctionsRPO::$stack
+
+/* StringRPI::$equation = null
+---------------------------------------- */
+-
+
+/* ReversePolish::pushCommand( $command )
+---------------------------------------- */
+Проверяется является ли команда числом (операндом)
+	Если да
+		Элемент сохраняется в стэк # ReversePolish::pushOperand()
+	Если нет (значит это оператор)
+		Проверяем есть ли такой оператор # AnonymousFunctionsRPO::hasOperator()
+		Если да
+			Смотрим, сколько нужно параметров для данного оператора # AnonymousFunctionsRPO::getNumberOfArguments()
+			Извлекаем необходимое число операндов # ReversePolish::putOperands()
+			Выполняется оператор # AnonymousFunctionsRPO::execute()
+			Записываем возвращенное значение # ReversePolish::pushOperand()
+		Если нет
+			Сообщаем о фатальной ошибке # Log::report()
+
+/* ReversePolish::pushOperand( $operand )
+---------------------------------------- */
+Добавить элемент в стэк операндов # ReversePolish::$operands
+
+/* AnonymousFunctionsRPO::execute( $operator, $operands )
+---------------------------------------- */
+Проверяем есть ли такой оператор # AnonymousFunctionsRPO::hasOperator()
+Если да
+	Запускаем вложенный callback передав ему аргументы # (call_user_func_array)
+	Проверяем возвратил ли метод число
+	Если да
+		Записываем число в стек # ReversePolish::pushOperand()
+	Если нет
+		Сообщаем о фатальной ошибке # Log::report()
+Если нет
+	Сообщаем о фатальной ошибке # Log::report()
+
+/* AnonymousFunctionsRPO::getNumberOfArguments( $operator )
+---------------------------------------- */
+Проверяем указано ли количество аргументов # AnonymousFunctionsRPO::$operators
+Если да
+Если нет
+	Получаем количество аргументов метода для указанного оператора # (ReflectionFunction::getNumberOfArguments)
+	Сохраняем количество аргументов # AnonymousFunctionsRPO::$operators
+Возвращаем количество аргументов
+
+/* ReversePolish::getNumberOfOperands()
+---------------------------------------- */
+Возвращает количество элементов в стеке # ReversePolish::$operands
+
+/* ReversePolish::putOperands( $count )
+---------------------------------------- */
+Проверяет количество операндов в стеке # ReversePolish::getNumberOfOperands()
+Если достаточно
+	Извлекаем их в массив # (array_put)
+	Сортируем массив в правильную последовательность # (array_reverse)
+	Возвращаем массив
+Если нет
+	Выводим фатальную ошибку # Log::report()
+
+/* ReversePolish::reset()
+---------------------------------------- */
+Удаляем содержимое стека # ReversePolish::$operands
+
+/* ReversePolish::$operands = array()
+---------------------------------------- */
+-
+
+/* AnonymousFunctionsRPO::$stack
+---------------------------------------- */
+-
+
+/* ReversePolish::removeOperator( $operator )
+---------------------------------------- */
+Удаляет оператор из ОУО # AnonymousFunctionsRPO::removeOperator()
