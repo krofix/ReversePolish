@@ -154,8 +154,8 @@ class ReversePolish
 interface IReversePolishOperator
 {
 	// public function addOperator();
-	// public function removeOperator();
-	// public function hasOperator();
-	// public function execute();
-	// public function getNumberOfArguments();
+	public function removeOperator( $operator );
+	public function hasOperator( $operator );
+	public function execute( $operator, array $operands );
+	public function getNumberOfArguments( $operator );
 }
