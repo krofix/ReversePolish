@@ -76,19 +76,4 @@ class StringRPI extends ReversePolish
 		// Вызывает родительский ресет # ReversePolish::reset()
 		parent::reset();
 	}
-
-	private function pushCommand( $command )
-	{
-		parent::pushCommand( $command );
-	}
-
-	private function pushOperand( $operand )
-	{
-		parent::pushOperand( $operand );
-	}
-
-	private function popOperands( $numOfOperands )
-	{
-		parent::popOperands( $numOfOperands );
-	}
 }

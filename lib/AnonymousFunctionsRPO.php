@@ -105,7 +105,7 @@ class AnonymousFunctionsRPO implements IReversePolishOperator
 	/**
 	 * Возвращает количество аргументов, необходимых для указанного оператора
 	 * @param  string $operator Оператор
-	 * @return int              Количество аргументов
+	 * @return int              Количество операндов
 	 */
 	public function getNumberOfArguments( $operator )
 	{
